@@ -509,8 +509,9 @@ function loadQuestions() {
   const countVal = document.getElementById('countSel').value;
   const rawRequested = countVal === 'all' ? Infinity : parseInt(countVal, 10);
   const requested = countVal === 'all' ? pool.length : rawRequested;
+  const effectiveRequested = Number.isFinite(requested) && requested > 0 ? requested : pool.length;
   const limit = Math.min(
-    Number.isFinite(requested) && requested > 0 ? requested : pool.length,
+    effectiveRequested,
     pool.length,
     MAX_QUESTIONS
   );
@@ -519,7 +520,7 @@ function loadQuestions() {
   // Progress bar
   const pb = document.getElementById('qprogress');
   const topicLabel = currentTopic || 'All Topics';
-  const capApplied = limit < (Number.isFinite(requested) && requested > 0 ? requested : pool.length);
+  const capApplied = limit < effectiveRequested;
   const cappedNote = capApplied ? ` (capped at ${MAX_QUESTIONS})` : '';
   document.getElementById('progTxt').textContent = `0 / ${currentQuestions.length} — ${topicLabel}${cappedNote}`;
   document.getElementById('progFill').style.width = '0%';
