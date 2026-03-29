@@ -519,7 +519,7 @@ function loadQuestions() {
   // Progress bar
   const pb = document.getElementById('qprogress');
   const topicLabel = currentTopic || 'All Topics';
-  const capApplied = limit === MAX_QUESTIONS && effectiveRequested > MAX_QUESTIONS;
+  const capApplied = limit === MAX_QUESTIONS && requested > MAX_QUESTIONS;
   const cappedNote = capApplied ? ` (capped at ${MAX_QUESTIONS})` : '';
   document.getElementById('progTxt').textContent = `0 / ${currentQuestions.length} — ${topicLabel}${cappedNote}`;
   document.getElementById('progFill').style.width = '0%';
