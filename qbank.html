@@ -508,7 +508,8 @@ function loadQuestions() {
   // Count
   const countVal = document.getElementById('countSel').value;
   const requested = countVal === 'all' ? pool.length : parseInt(countVal, 10);
-  const effectiveRequested = Number.isFinite(requested) && requested > 0 ? requested : Math.min(pool.length, MAX_QUESTIONS);
+  const defaultRequested = 20;
+  const effectiveRequested = Number.isFinite(requested) && requested > 0 ? requested : defaultRequested;
   const limit = Math.min(
     effectiveRequested,
     pool.length,
