@@ -444,9 +444,8 @@ function buildSidebar() {
   html += '<div class="divider"></div>';
   const icons = {'Numbers & Fractions':'🔢','Percentage':'%️','Profit & Loss':'💰','Ratio & Proportion':'⚖️','Mixture & Alligation':'🧪','Time & Work':'⚙️','Speed, Time & Distance':'🚗','Boats & Streams':'🚢','Trains':'🚂','Clocks & Calendars':'🕐','Permutation & Combination':'🔀','Probability & Statistics':'🎲','Ages':'👤','Average':'📊','Simple & Compound Interest':'🏦'};
   Object.entries(TOPICS).forEach(([name, qs]) => {
-    const displayCount = Math.min(qs.length, MAX_QUESTIONS);
     html += `<div class="nav-item" onclick="selectTopic('${name}',this)" id="nav-${name.replace(/[^a-z]/gi,'_')}">
-      <span>${icons[name]||'📖'} ${name}</span><span class="nav-count">${displayCount}</span></div>`;
+      <span>${icons[name]||'📖'} ${name}</span><span class="nav-count">${qs.length}</span></div>`;
   });
   nav.innerHTML = html;
 }
@@ -519,7 +518,7 @@ function loadQuestions() {
   // Progress bar
   const pb = document.getElementById('qprogress');
   const topicLabel = currentTopic || 'All Topics';
-  const capApplied = Number.isFinite(requested) && requested > MAX_QUESTIONS;
+  const capApplied = Number.isFinite(requested) && limit < requested;
   const cappedNote = capApplied ? ` (capped at ${MAX_QUESTIONS})` : '';
   document.getElementById('progTxt').textContent = `0 / ${currentQuestions.length} — ${topicLabel}${cappedNote}`;
   document.getElementById('progFill').style.width = '0%';
