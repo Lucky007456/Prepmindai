@@ -193,7 +193,7 @@ h1,h2,h3,h4{font-family:'Clash Display',sans-serif;}
           <option value="20" selected>20 Questions</option>
           <option value="30">30 Questions</option>
           <option value="50">50 Questions</option>
-          <option value="all">All (max 485)</option>
+          <option value="all" id="allOption">All (max)</option>
         </select>
       </div>
       <div class="ctrl-group">
@@ -207,7 +207,7 @@ h1,h2,h3,h4{font-family:'Clash Display',sans-serif;}
       </div>
       <button class="load-btn" onclick="loadQuestions()">Load ▶</button>
     </div>
-    <div class="ctrl-note">Local question bank only (API removed). Loads are capped at 485 questions.</div>
+    <div class="ctrl-note" id="capNote">Local question bank only (API removed). Loads are capped.</div>
 
     <!-- PROGRESS BAR -->
     <div class="qprogress" id="qprogress">
@@ -416,6 +416,12 @@ const TOPICS = {
 
 const MAX_QUESTIONS = 485; // Cap local question bank usage to keep GitHub Pages fully static
 
+// Sync UI labels with cap
+const allOption = document.getElementById('allOption');
+if (allOption) allOption.textContent = `All (max ${MAX_QUESTIONS})`;
+const capNote = document.getElementById('capNote');
+if (capNote) capNote.textContent = `Local question bank only (API removed). Loads are capped at ${MAX_QUESTIONS} questions.`;
+
 // ══════════════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════════════
@@ -519,7 +525,7 @@ function loadQuestions() {
   // Progress bar
   const pb = document.getElementById('qprogress');
   const topicLabel = currentTopic || 'All Topics';
-  const capApplied = limit === MAX_QUESTIONS && requested > MAX_QUESTIONS;
+  const capApplied = limit === MAX_QUESTIONS && effectiveRequested >= MAX_QUESTIONS;
   const cappedNote = capApplied ? ` (capped at ${MAX_QUESTIONS})` : '';
   document.getElementById('progTxt').textContent = `0 / ${currentQuestions.length} — ${topicLabel}${cappedNote}`;
   document.getElementById('progFill').style.width = '0%';
