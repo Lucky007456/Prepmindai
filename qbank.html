@@ -414,6 +414,7 @@ const TOPICS = {
   ],
 };
 
+const DEFAULT_QUESTION_COUNT = 20;
 const MAX_QUESTIONS = 485; // Cap local question bank usage to keep GitHub Pages fully static
 
 // Sync UI labels with cap
@@ -514,7 +515,7 @@ function loadQuestions() {
   // Count
   const countVal = document.getElementById('countSel').value;
   const requested = countVal === 'all' ? pool.length : parseInt(countVal, 10);
-  const effectiveRequested = Number.isFinite(requested) && requested > 0 ? requested : 20; // defensive fallback
+  const effectiveRequested = Number.isFinite(requested) && requested > 0 ? requested : DEFAULT_QUESTION_COUNT; // defensive fallback
   const limit = Math.min(
     effectiveRequested,
     pool.length,
@@ -525,7 +526,7 @@ function loadQuestions() {
   // Progress bar
   const pb = document.getElementById('qprogress');
   const topicLabel = currentTopic || 'All Topics';
-  const capApplied = limit === MAX_QUESTIONS && effectiveRequested >= MAX_QUESTIONS;
+  const capApplied = limit === MAX_QUESTIONS && pool.length >= MAX_QUESTIONS;
   const cappedNote = capApplied ? ` (capped at ${MAX_QUESTIONS})` : '';
   document.getElementById('progTxt').textContent = `0 / ${currentQuestions.length} — ${topicLabel}${cappedNote}`;
   document.getElementById('progFill').style.width = '0%';
