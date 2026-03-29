@@ -415,13 +415,7 @@ const TOPICS = {
 };
 
 const DEFAULT_QUESTION_COUNT = 20;
-const MAX_QUESTIONS = 485; // Cap local question bank usage to keep GitHub Pages fully static
-
-// Sync UI labels with cap
-const allOption = document.getElementById('allOption');
-if (allOption) allOption.textContent = `All (max ${MAX_QUESTIONS})`;
-const capNote = document.getElementById('capNote');
-if (capNote) capNote.textContent = `Local question bank only (API removed). Loads are capped at ${MAX_QUESTIONS} questions.`;
+const MAX_QUESTIONS = 485; // Matches curated local bank size used for static GitHub Pages hosting
 
 // ══════════════════════════════════════════════════════════════
 //  STATE
@@ -438,8 +432,16 @@ let totalAttempted = 0, totalCorrect = 0;
 //  INIT
 // ══════════════════════════════════════════════════════════════
 function init() {
+  syncCapLabels();
   buildSidebar();
   buildMobTopics();
+}
+
+function syncCapLabels() {
+  const allOption = document.getElementById('allOption');
+  if (allOption) allOption.textContent = `All (max ${MAX_QUESTIONS})`;
+  const capNote = document.getElementById('capNote');
+  if (capNote) capNote.textContent = `Local question bank only (API removed). Loads are capped at ${MAX_QUESTIONS} questions.`;
 }
 
 function buildSidebar() {
