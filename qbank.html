@@ -608,7 +608,7 @@ function answer(qi, chosen, topicName) {
   const statusEl = document.getElementById(`status-${qi}`);
   if(statusEl) statusEl.innerHTML = isCorrect
     ? '<span style="color:var(--green);font-weight:700">✓ Correct!</span>'
-    : `<span style="color:var(--red);font-weight:700">✗ Wrong</span>`;
+    : `<span style="color:var(--red);font-weight:700">✗ Wrong</span> · <span style="color:var(--text2)">Correct: <strong>${'ABCD'[correct_ans]}. ${esc(q.o[correct_ans])}</strong></span><br><span style="color:var(--text3)">Explanation: ${esc(q.exp||'No explanation provided.')}</span>`;
 
   // Card style
   const card = document.getElementById(`qcard-${qi}`);
@@ -617,8 +617,8 @@ function answer(qi, chosen, topicName) {
     card.classList.add(isCorrect?'correct-card':'wrong-card');
   }
 
-  // Show explanation
-  document.getElementById(`exp-${qi}`).classList.add('show');
+  // Show explanation only when wrong (for clarity)
+  if(!isCorrect) document.getElementById(`exp-${qi}`).classList.add('show');
 
   // Update progress
   updateStats();
