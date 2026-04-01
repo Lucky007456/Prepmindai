@@ -3863,7 +3863,7 @@ const TOPICS = {
 };
 
 const PDF_FILE_NAME = 'cia1-quantitative-aptitude-qb-48-92.pdf';
-const PDF_FILE_URL = encodeURIComponent(PDF_FILE_NAME);
+const ENCODED_PDF_FILE_NAME = encodeURIComponent(PDF_FILE_NAME);
 const PDF_PAGE_COUNT = Object.values(TOPICS).reduce((max, list) => {
   list.forEach((q) => {
     if(q.pdfPage && q.pdfPage > max) max = q.pdfPage;
@@ -3878,9 +3878,9 @@ function questionLabel(q, qi) {
 function buildPdfRef(q) {
   if(!q || !q.pdfPage) return '';
   const page = Number(q.pdfPage);
-  if(!Number.isFinite(page) || page < 1 || page > PDF_PAGE_COUNT) return '';
+  if(!Number.isFinite(page) || page < 1 || (PDF_PAGE_COUNT && page > PDF_PAGE_COUNT)) return '';
   const pageText = esc(page);
-  return `<div class="qref">📄 Data/table in source PDF (page ${pageText}). <a href="${PDF_FILE_URL}#page=${page}" target="_blank" rel="noopener">Open PDF</a></div>`;
+  return `<div class="qref">📄 Data/table in source PDF (page ${pageText}). <a href="${ENCODED_PDF_FILE_NAME}#page=${page}" target="_blank" rel="noopener noreferrer">Open PDF</a></div>`;
 }
 
 // ══════════════════════════════════════════════════════════════
