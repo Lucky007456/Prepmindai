@@ -3864,6 +3864,7 @@ const TOPICS = {
 
 const PDF_FILE_NAME = 'Quantitative Aptitude Question Bank(1) (1)-48-92.pdf';
 const PDF_FILE_URL = encodeURIComponent(PDF_FILE_NAME);
+const PDF_PAGE_COUNT = 45;
 
 function questionLabel(q, qi) {
   return q.num ? `Q${q.num}` : `Q${qi+1}`;
@@ -3872,7 +3873,7 @@ function questionLabel(q, qi) {
 function buildPdfRef(q) {
   if(!q || !q.pdfPage) return '';
   const page = Number(q.pdfPage);
-  if(!Number.isFinite(page)) return '';
+  if(!Number.isFinite(page) || page < 1 || page > PDF_PAGE_COUNT) return '';
   return `<div class="qref">📄 Data/table in source PDF (page ${page}). <a href="${PDF_FILE_URL}#page=${page}" target="_blank" rel="noopener">Open PDF</a></div>`;
 }
 
