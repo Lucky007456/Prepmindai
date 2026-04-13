@@ -100,10 +100,19 @@ h1,h2,h3,h4{font-family:'Clash Display',sans-serif;}
 .mark-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--rs);border:1px solid var(--border);background:none;color:var(--text3);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:'Instrument Sans',sans-serif;}
 .mark-btn:hover{border-color:var(--orange);color:var(--orange);}
 .mark-btn.marked{background:rgba(255,170,68,.1);border-color:rgba(255,170,68,.3);color:var(--orange);}
-.exp-box{background:var(--bg4);border:1px solid var(--border2);border-radius:var(--rs);padding:13px;margin-top:10px;display:none;}
+.exp-box{background:var(--bg4);border:1px solid var(--border2);border-radius:var(--rs);padding:16px 18px;margin-top:10px;display:none;}
 .exp-box.show{display:block;}
 .exp-head{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
 .exp-body{font-size:13px;color:var(--text2);line-height:1.7;}
+.exp-solution{font-family:'Clash Display',sans-serif;font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.exp-step{margin-top:14px;}
+.exp-step-title{font-family:'Clash Display',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.exp-step-text{font-size:13px;color:var(--text2);line-height:1.8;white-space:pre-line;}
+.exp-quote{margin:10px 0 8px;padding-left:12px;border-left:3px solid var(--border2);color:var(--text);font-style:italic;line-height:1.6;}
+.exp-answer{color:var(--green);font-weight:700;margin-bottom:6px;}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.95em;line-height:1;}
+.frac .top{border-bottom:1px solid currentColor;padding:0 2px;}
+.frac .bottom{padding:0 2px;font-size:.85em;}
 .trick-box{background:rgba(232,255,90,.04);border:1px solid var(--border2);border-radius:7px;padding:9px 11px;margin-top:8px;}
 .trick-lbl{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
 .trick-txt{font-size:12px;color:var(--text2);line-height:1.6;}
@@ -555,11 +564,7 @@ function renderPractice() {
         <button class="mark-btn" id="mark-${qi}" onclick="toggleMark(${qi})">🔖 Mark for Review</button>
         <span id="status-${qi}" style="font-size:12px;color:var(--text3)"></span>
       </div>
-      <div class="exp-box" id="exp-${qi}">
-        <div class="exp-head"><span>✅</span> Explanation</div>
-        <div class="exp-body">${esc(q.exp||'')}</div>
-        ${q.trick?`<div class="trick-box"><div class="trick-lbl">⚡ Quick Trick</div><div class="trick-txt">${esc(q.trick)}</div></div>`:''}
-      </div>`;
+      ${buildExplanation(q, { id: `exp-${qi}` })}`;
     area.appendChild(card);
   });
 }
@@ -657,11 +662,13 @@ function renderReveal() {
           <span class="opt-ltr">${'ABCD'[oi]}</span><span>${esc(opt)}</span>
         </button>`).join('')}
       </div>
-      <div class="exp-box show">
-        <div class="exp-head"><span>✅</span> Answer & Explanation</div>
-        <div class="exp-body"><strong style="color:var(--green)">${'ABCD'[q.a]}. ${esc(q.o[q.a])}</strong><br><br>${esc(q.exp||'')}</div>
-        ${q.trick?`<div class="trick-box"><div class="trick-lbl">⚡ Quick Trick</div><div class="trick-txt">${esc(q.trick)}</div></div>`:''}
-      </div>`;
+      ${buildExplanation(q, {
+        id: `exp-${qi}`,
+        show: true,
+        showAnswer: true,
+        answerLabel: 'ABCD'[q.a],
+        answerText: q.o[q.a]
+      })}`;
     area.appendChild(card);
   });
 }
@@ -695,11 +702,7 @@ function renderReview() {
           <span class="opt-ltr">${'ABCD'[oi]}</span><span>${esc(opt)}</span>
         </button>`).join('')}
       </div>
-      <div class="exp-box" id="rev-exp-${idx}">
-        <div class="exp-head">✅ Explanation</div>
-        <div class="exp-body">${esc(q.exp||'')}</div>
-        ${q.trick?`<div class="trick-box"><div class="trick-lbl">⚡ Quick Trick</div><div class="trick-txt">${esc(q.trick)}</div></div>`:''}
-      </div>`;
+      ${buildExplanation(q, { id: `rev-exp-${idx}` })}`;
     area.appendChild(card);
     idx++;
   });
@@ -791,6 +794,38 @@ function updateTimerDisplay() {
 // ══════════════════════════════════════════════════════════════
 //  UTILS
 // ══════════════════════════════════════════════════════════════
+function formatExplanation(text) {
+  const escaped = esc(text || '');
+  if (!escaped) return '';
+  const withFractions = escaped.replace(/(\d+)\s*\/\s*(\d+)/g, '<span class="frac"><span class="top">$1</span><span class="bottom">$2</span></span>');
+  return withFractions.replace(/\s*→\s*/g, ' →\n');
+}
+
+function buildExplanation(q, {id, show = false, showAnswer = false, answerLabel = '', answerText = ''} = {}) {
+  const answerHtml = showAnswer
+    ? `<div class="exp-answer">Answer: ${esc(answerLabel)}. ${esc(answerText)}</div>`
+    : '';
+  const expText = formatExplanation(q.exp || '');
+  const trickHtml = q.trick
+    ? `<div class="trick-box"><div class="trick-lbl">⚡ Quick Trick</div><div class="trick-txt">${formatExplanation(q.trick)}</div></div>`
+    : '';
+  return `
+    <div class="exp-box${show ? ' show' : ''}" id="${id}">
+      <div class="exp-solution">Solution</div>
+      <div class="exp-step">
+        <div class="exp-step-title">Step 1: Read the question</div>
+        <div class="exp-step-text">We are asked:</div>
+        <blockquote class="exp-quote">${esc(q.q)}</blockquote>
+      </div>
+      <div class="exp-step">
+        <div class="exp-step-title">Step 2: Solve</div>
+        ${answerHtml}
+        <div class="exp-step-text">${expText}</div>
+        ${trickHtml}
+      </div>
+    </div>`;
+}
+
 function esc(s) {
   if(!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
